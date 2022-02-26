@@ -1,9 +1,9 @@
 import express from 'express';
 const router = express.Router();
 
-/* GET home page. */
+/* GET posts listing. */
 router.get('/', (req, res, next) => {
-  res.send('Welcome to the API :)');
+  res.send('posts home');
 });
 
 export default router;
