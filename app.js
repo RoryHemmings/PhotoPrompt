@@ -1,15 +1,20 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+import indexRouter from './routes/index.js';
+import usersRouter from './routes/users.js';
+import databaseUtil from'./utils/database.js';
 
 const PORT = 80;
 
-var app = express();
+const app = express();
+
+// ty to https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -36,6 +41,10 @@ app.use(function(err, req, res, next) {
   res.send("Error " + err.status + " :(");
 });
 
-app.listen(PORT, () => {
-  console.log('started on ' + PORT + ' yeah-yuh.');
-})
+(async () => {
+  await databaseUtil.openDb(path.join(__dirname, 'db', 'db.db'));
+
+  app.listen(PORT, () => {
+    console.log('started on ' + PORT + ' yeah-yuh.');
+  })
+})();
