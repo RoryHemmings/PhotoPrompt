@@ -8,14 +8,18 @@ async function hashPassword(password) {
   return await bcrypt.hash(password, SALT_ROUNDS)
 }
 
-function addFriend(userID, friendID) {
-  let u = database.getUser(userID);
+async function debugPrint() {
+  console.log(await database.getAllUsers());
+}
+
+async function addFriend(userID, friendID) {
+  let u = await database.getUser(userID);
   u.friends.push(friendID);
   database.saveUser(u);
 }
 
-function addPost(userID, postID) {
-  let u = database.getUser(userID);
+async function addPost(userID, postID) {
+  let u = await database.getUser(userID);
   u.posts.push(postID);
   database.saveUser(u);
 }
@@ -24,11 +28,11 @@ function addPost(userID, postID) {
 function getPublicUser(user) {
   return {
     id: user.id,
-    email: user.emal,
+    email: user.email,
     username: user.username,
     bio: user.bio,
     streak: user.streak,
-    friends: user.posts,
+    friends: user.friends,
     posts: user.posts
   }
 }
@@ -61,8 +65,14 @@ async function verifyUser(email, password) {
   return await bcrypt.compare(password, u.passwordHash);  
 }
 
+// Return user object if found, and undefined otherwise
 async function getUser(userID) {
-  return await database.getUser(userID);
+  let u = await database.getUser(userID);
+
+  if (!u)
+    return undefined;
+
+  return getPublicUser(u);
 }
 
 async function findUser(email) {
@@ -70,8 +80,9 @@ async function findUser(email) {
 }
 
 export default {
+  debugPrint,
   createNewUser,
-  getPublicUser,
+  getUser,
   findUser,
   verifyUser,
   addFriend,
