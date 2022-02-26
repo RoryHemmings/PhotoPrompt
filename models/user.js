@@ -24,6 +24,7 @@ function addPost(userID, postID) {
 function getPublicUser(user) {
   return {
     id: user.id,
+    email: user.emal,
     username: user.username,
     bio: user.bio,
     streak: user.streak,
@@ -32,9 +33,16 @@ function getPublicUser(user) {
   }
 }
 
-async function createNewUser(username, password, bio) {
+// Creates a user, returns false if user already exists
+async function createNewUser(email, username, password, bio) {
+  // Check if user already exists
+  if (await database.findUser(email))
+    return false;
+
+  // Create user object
   let u = {
     id: uuidv4(),
+    email: email,
     username: username,
     passwordHash: await hashPassword(password),
     bio: bio,
@@ -43,17 +51,28 @@ async function createNewUser(username, password, bio) {
     posts: []
   };
 
+  // Save user object to database
   database.saveUser(u);
+  return true;
 }
 
-async function verifyUser(username, password) {
-  let u = await database.findUser(username);
+async function verifyUser(email, password) {
+  let u = await database.findUser(email);
   return await bcrypt.compare(password, u.passwordHash);  
+}
+
+async function getUser(userID) {
+  return await database.getUser(userID);
+}
+
+async function findUser(email) {
+  return await database.findUser(email);
 }
 
 export default {
   createNewUser,
   getPublicUser,
+  findUser,
   verifyUser,
   addFriend,
   addPost,
