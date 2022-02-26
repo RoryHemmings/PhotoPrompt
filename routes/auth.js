@@ -1,8 +1,8 @@
 // ty to https://github.com/passport/todos-express-password
 
 import { Router } from 'express';
-import db from '../utils/database';
-import user from '../models/user.js';
+import db from '../utils/database.js';
+// import user from '../models/user.js';
 
 const router = Router();
 
