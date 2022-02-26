@@ -15,4 +15,8 @@ router.get('/', async (req, res, next) => {
   res.send('success');
 });
 
+router.get('/:id', async (req, res, next) => {
+
+});
+
 export default router;
