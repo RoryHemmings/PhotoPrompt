@@ -122,7 +122,7 @@ async function findUser(email) {
     bio: row.bio,
     streak: row.streak,
     friends: JSON.parse(row.friends),
-    post: JSON.parse(row.posts)
+    posts: JSON.parse(row.posts)
   }
 }
 
