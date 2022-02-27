@@ -7,7 +7,7 @@ async function debugPrint() {
 
 // Creates new post, returns id of new post
 async function createNewPost(userID, description, image) {
-  // Create user object
+  // Create post object
   let p = {
     id: uuidv4(),
     userID: userID,
@@ -16,23 +16,28 @@ async function createNewPost(userID, description, image) {
     date: Date.now()
   };
 
-  // Save user object to database
+  // Save post object to database
   database.savePost(p);
   return p.id;
 }
 
-// Return user object if found, and undefined otherwise
+// Return post object if found, and undefined otherwise
 async function getPost(postID) {
-  let u = await database.getPost(postID);
+  let p = await database.getPost(postID);
 
-  if (!u)
+  if (!p)
     return undefined;
 
-  return u;
+  return p;
+}
+
+async function getAllPosts() {
+  return await database.getAllPosts();
 }
 
 export default {
   debugPrint,
   createNewPost,
+  getAllPosts,
   getPost
 }

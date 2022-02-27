@@ -17,8 +17,15 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/:id', async (req, res, next) => {
-  let u = await user.getUser(req.params.id);
-
+  let u;
+  
+  try {
+    u = await user.getUser(req.params.id);
+  } catch (err) {
+    console.log('error in getting user');
+    console.log(err);
+  }
+  
   // Check if user was found
   if (!u) {
     res.status(404);

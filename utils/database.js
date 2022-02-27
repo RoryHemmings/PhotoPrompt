@@ -151,6 +151,27 @@ async function getPost(postID) {
   }
 }
 
+async function getAllPosts() {
+    let rows = await db.all(
+        'SELECT * FROM posts'
+    );
+
+    if (!rows)
+        return undefined;
+    
+    rows = rows.map(row => {
+        return {
+            id: row.id,
+            userID: row.userID,
+            description: row.description,
+            image: row.image,
+            date: row.date
+        }
+    })
+
+    return rows;
+}
+
 // Get number of recent posts
 async function getPosts(num) {
 
@@ -160,7 +181,7 @@ async function savePost(post) {
   await db.run(
     'INSERT INTO posts (id, userID, description, image, date)' +
     'VALUES(?, ?, ?, ?, ?)', 
-    [post.id, post.userID, post.description, user.image, user.date] 
+    [post.id, post.userID, post.description, post.image, post.date] 
   );
 }
 
@@ -173,6 +194,7 @@ export default {
     getUser,
     findUser,
     getPost,
+    getAllPosts,
     getPosts,
     savePost,
 }
