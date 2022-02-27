@@ -11,6 +11,7 @@ router.post('/register', (req, res, next) => {
         if (!success) {
             res.status(406);
             res.send('User already exists.');
+            return;
         }
         
         res.status(201);
@@ -21,28 +22,40 @@ router.post('/register', (req, res, next) => {
 });
 
 router.post('/login', (req, res, next) => {
-    verifyUser(req.body.email, req.body.password).then(success => {
+    user.verifyUser(req.body.email, req.body.password).then(success => {
         if (!success) {
             res.status(401);
             res.send('Invalid username or password');
             return;
         }
 
-        let user = findUser(req.body.email);
+        user.findUser(req.body.email).then(found => {
+            if (!found) {
+                res.status(500);
+                res.send('Could not find user');
+                return;
+            }
 
-        if (!user) {
-            res.status(500);
-            res.send('Could not find user');
-            return;
-        }
-
-        db.createSession(user.id).then(session => {
-            res.status(200);
-            res.send({ session });
+            db.createSession(found.id).then(session => {
+                res.status(200);
+                res.send({ session, userID: found.id });
+            }).catch(err => {
+                res.status(504);
+                next(err);
+            });
         }).catch(err => {
-            res.status(504);
-            next(err);
-        });
+            console.log('Error finding user!');
+            console.log(err);
+
+            res.status(500);
+            res.send();
+        })
+    }).catch(err => {
+        console.log('Error verifying user!');
+        console.log(err);
+
+        res.status(500);
+        res.send();
     });
 });
 
