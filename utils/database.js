@@ -16,6 +16,11 @@ async function openDb (path) {
       'streak INTEGER, friends TEXT, posts TEXT)'
     );
 
+    await db.run(
+      'CREATE TABLE IF NOT EXISTS posts (id BLOB PRIMARY KEY, ' +
+      'userID BLOB, description TEXT, image TEXT, date TEXT)'
+    );
+
     await db.run('CREATE TABLE IF NOT EXISTS sessions ( sessionID TEXT NOT NULL, userID TEXT NOT NULL, expiry INTEGER NOT NULL );');
 }
 
@@ -128,12 +133,35 @@ async function findUser(email) {
 
 // Get post by postID
 async function getPost(postID) {
+  let row = await db.get(
+    'SELECT * FROM posts WHERE id = ?',
+    [postID]
+  );
 
+  // User couldn't be found
+  if (!row)
+    return undefined;
+
+  return {
+    id: row.id,
+    userID: row.userID,
+    description: row.description,
+    image: row.image,
+    date: row.date
+  }
 }
 
 // Get number of recent posts
 async function getPosts(num) {
 
+}
+
+async function savePost(post) {
+  await db.run(
+    'INSERT INTO posts (id, userID, description, image, date)' +
+    'VALUES(?, ?, ?, ?, ?)', 
+    [post.id, post.userID, post.description, user.image, user.date] 
+  );
 }
 
 export default {
@@ -146,4 +174,5 @@ export default {
     findUser,
     getPost,
     getPosts,
+    savePost,
 }
