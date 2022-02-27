@@ -31,7 +31,7 @@ router.post('/login', (req, res, next) => {
 
         user.findUser(req.body.email).then(found => {
             if (!found) {
-                res.status(500);
+                res.status(501);
                 res.send('Could not find user');
                 return;
             }
@@ -47,7 +47,7 @@ router.post('/login', (req, res, next) => {
             console.log('Error finding user!');
             console.log(err);
 
-            res.status(500);
+            res.status(501);
             res.send();
         })
     }).catch(err => {
