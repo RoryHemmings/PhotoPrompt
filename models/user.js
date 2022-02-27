@@ -62,6 +62,10 @@ async function createNewUser(email, username, password, bio) {
 
 async function verifyUser(email, password) {
   let u = await database.findUser(email);
+  
+  if (!u)
+    return false;
+
   return await bcrypt.compare(password, u.passwordHash);  
 }
 
